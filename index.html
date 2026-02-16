@@ -1,26 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NURZAO | Future of Digital Assets</title>
+    <title>NURZAO | Premium Domain</title>
     <style>
-        body { background: radial-gradient(circle, #1a1a1a, #000); color: white; font-family: 'Courier New', Courier, monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .logo { font-size: 4rem; font-weight: bold; letter-spacing: 15px; color: #ff8c00; text-shadow: 0 0 20px #ff8c00; margin-bottom: 10px; }
-        .tagline { font-size: 1rem; color: #888; text-transform: uppercase; letter-spacing: 3px; }
-        .status-box { margin-top: 50px; padding: 10px 20px; border: 1px solid #333; border-radius: 5px; background: rgba(255,255,255,0.05); }
-        .email { color: #ff8c00; text-decoration: none; font-weight: bold; }
-        .glitch { animation: glitch 2s infinite; }
-        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        :root {
+            --primary-orange: #ff6b00;
+            --bg-black: #0a0a0a;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-black);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        /* خلفية متحركة خفيفة */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 107, 0, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(50px);
+            animation: move 10s infinite alternate;
+        }
+        @keyframes move {
+            from { transform: translate(-50%, -50%); }
+            to { transform: translate(50%, 50%); }
+        }
+        .container {
+            text-align: center;
+            z-index: 1;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+        }
+        h1 {
+            font-size: 4rem;
+            letter-spacing: 15px;
+            margin: 0;
+            color: var(--primary-orange);
+            text-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+            text-transform: uppercase;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #888;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+        .tagline {
+            color: #eee;
+            font-style: italic;
+            margin-bottom: 30px;
+            display: block;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: var(--primary-orange);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            margin-top: 20px;
+        }
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 107, 0, 0.5);
+            background-color: #ff8533;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: #444;
+        }
     </style>
 </head>
 <body>
-    <div class="logo glitch">NURZAO</div>
-    <div class="tagline">Decoding the Future of Digital Assets</div>
-    
-    <div class="status-box">
-        <p>SYSTEM STATUS: <span style="color: #00ff00;">ENCRYPTED & ACTIVE</span></p>
-        <p>Inquiries: <a href="mailto:invest@nurzao.com" class="email">invest@nurzao.com</a></p>
+    <div class="glow"></div>
+    <div class="container">
+        <h1>NURZAO</h1>
+        <p>A Global Identity for Next-Gen Tech</p>
+        <span class="tagline">Exclusive Domain Asset</span>
+        
+        <a href="mailto:invest@nurzao.com?subject=Inquiry about Nurzao.com" class="btn">MAKE AN OFFER</a>
+        
+        <div class="footer">
+            © 2026 MANUSZERO ASSETS. ALL RIGHTS RESERVED.
+        </div>
     </div>
 </body>
 </html>
