@@ -1,246 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nurzao Official App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #00f2ff;
-            --gold: #ffcc00;
-            --bg: #0a0a0a;
-            --card-bg: #1a1a1a;
-        }
+<style>
+    /* إضافة أنماط للمستويات ولوحة المتصدرين */
+    .level-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--neon-blue);
+        margin-bottom: 10px;
+        display: inline-block;
+        box-shadow: var(--neon-glow);
+    }
+    
+    .leaderboard-list {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+    }
 
-        body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+    .leaderboard-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #222;
+    }
+</style>
 
-        /* --- الهيدر العلوي --- */
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-        }
+<div class="score-section">
+    <div id="user-level" class="level-badge">LEVEL: SPARK</div>
+    <div id="balance" class="score-value">0</div>
+    <div style="font-size: 10px; color: #888;">NRZ COINS</div>
+</div>
 
-        .project-logo {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--primary);
-            border-radius: 8px;
-            background: url('coin.png') center/cover;
-        }
+<div id="leaderboard-page" class="page-section" style="text-align: center;">
+    <h3 style="color: var(--neon-blue);">TOP MINERS</h3>
+    <div class="leaderboard-list">
+        <div class="leaderboard-item"><span>1. CryptoKing</span><span>1,250,000 NRZ</span></div>
+        <div class="leaderboard-item"><span>2. NeonMaster</span><span>980,500 NRZ</span></div>
+        <div class="leaderboard-item"><span>3. Nurzao_Fan</span><span>750,200 NRZ</span></div>
+    </div>
+</div>
 
-        .connect-wallet {
-            background: linear-gradient(90deg, #0072ff, #00f2ff);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
-        }
-
-        /* --- منطقة النقاط --- */
-        .score-section {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .score-title { font-size: 12px; color: #888; letter-spacing: 2px; }
-        .score-value { 
-            font-family: 'Orbitron', sans-serif;
-            font-size: 45px; 
-            color: var(--primary);
-            text-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
-        }
-
-        /* --- المحتوى المتغير --- */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .page-section { display: none; width: 100%; text-align: center; }
-        .page-section.active { display: block; }
-
-        /* صفحة التعدين */
-        .mining-btn {
-            background: none; border: none; cursor: pointer;
-            transition: transform 0.05s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .mining-btn:active { transform: scale(0.9); }
-        .mining-btn img { width: 250px; filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.2)); }
-
-        /* --- الناف بار السفلي (الأزرار الخمسة) --- */
-        .bottom-nav {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background: #111;
-            padding: 10px 0;
-            border-top: 1px solid #333;
-            padding-bottom: 25px; /* للأجهزة الحديثة */
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #666;
-            font-size: 10px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .nav-item.active { color: var(--primary); }
-
-        .nav-item i { font-size: 20px; margin-bottom: 5px; }
+<script>
+    // نظام المستويات
+    function updateLevel(score) {
+        let level = "SPARK";
+        let color = "#00f2ff";
         
-        /* أيقونة التعدين الوسطى مميزة */
-        .mine-nav-btn {
-            background: var(--card-bg);
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            margin-top: -35px;
-            border: 3px solid var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
-        }
+        if (score >= 1000000) { level = "SUPERNOVA"; color = "#ffd700"; }
+        else if (score >= 100000) { level = "FUSION"; color = "#bc13fe"; }
+        else if (score >= 10000) { level = "VOLTAGE"; color = "#00f2ff"; }
+        
+        const badge = document.getElementById('user-level');
+        badge.innerText = "LEVEL: " + level;
+        badge.style.borderColor = color;
+        badge.style.color = color;
+        badge.style.boxShadow = `0 0 15px ${color}`;
+    }
 
-        /* بطاقات المتجر */
-        .card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 10px 0;
-            border: 1px solid #333;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="top-nav">
-        <div class="project-logo"></div>
-        <button class="connect-wallet" onclick="alert('Wallet connection coming soon!')">Connect Wallet</button>
-    </div>
-
-    <div class="score-section">
-        <div class="score-title">NRZ BALANCE</div>
-        <div id="balance" class="score-value">0</div>
-    </div>
-
-    <div class="main-content">
-        <div id="mining-page" class="page-section active">
-            <button class="mining-btn" onclick="mine(event)">
-                <img src="coin.png" alt="NRZ">
-            </button>
-            <p style="margin-top:20px; color:#555;">⚡ <span id="energy">1000</span> / 1000</p>
-        </div>
-
-        <div id="store-page" class="page-section">
-            <h2 style="color:var(--gold)">NURZAO STORE</h2>
-            <div class="card">
-                <p>Speed Booster x2</p>
-                <button class="connect-wallet">Buy 100 NRZ</button>
-            </div>
-            <div class="card">
-                <p>Auto-Tap Bot</p>
-                <button class="connect-wallet">Buy 500 NRZ</button>
-            </div>
-        </div>
-
-        <div id="profile-page" class="page-section">
-            <div class="card">
-                <div style="width:80px; height:80px; background:#333; border-radius:50%; margin: 0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:30px;">👤</div>
-                <h3 id="user-name">User</h3>
-                <p style="color:#888">Rank: Elite Miner</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-nav">
-        <div class="nav-item" onclick="showPage('store')">
-            <span>🛒</span>
-            <span>Store</span>
-        </div>
-        <div class="nav-item" onclick="alert('Friends system coming soon')">
-            <span>👥</span>
-            <span>Friends</span>
-        </div>
-        <div class="nav-item active" onclick="showPage('mining')">
-            <div class="mine-nav-btn">⛏️</div>
-            <span>Mining</span>
-        </div>
-        <div class="nav-item" onclick="alert('Rewards coming soon')">
-            <span>⭐</span>
-            <span>Tasks</span>
-        </div>
-        <div class="nav-item" onclick="showPage('profile')">
-            <span>👤</span>
-            <span>Profile</span>
-        </div>
-    </div>
-
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // جلب اسم المستخدم من تلغرام
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
-        }
-
-        let score = parseInt(localStorage.getItem('nrz_score')) || 0;
-        let energy = 1000;
-        document.getElementById('balance').innerText = score.toLocaleString();
-
-        function mine(event) {
-            if (energy <= 0) return;
-            score++;
-            energy--;
+    // استدعاء التحديث عند كل نقرة
+    function mine() {
+        if (energy > 0) {
+            score++; energy--;
             document.getElementById('balance').innerText = score.toLocaleString();
             document.getElementById('energy').innerText = energy;
+            updateLevel(score); // تحديث المستوى
             localStorage.setItem('nrz_score', score);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
-
-        function showPage(pageId) {
-            // إخفاء كل الصفحات
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            // إظهار الصفحة المطلوبة
-            document.getElementById(pageId + '-page').classList.add('active');
-            
-            // تفعيل الزر في الناف بار
-            event.currentTarget.classList.add('active');
-        }
-
-        // استرجاع طاقة بسيط
-        setInterval(() => { if(energy < 1000) energy++; document.getElementById('energy').innerText = energy; }, 3000);
-    </script>
-</body>
-</html>
+    }
+</script>
