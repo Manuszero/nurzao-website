@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nurzao Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nurzao Mining Platform</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -13,20 +13,23 @@
             --card-bg: #161618;
             --text-gray: #a0a0a0;
             --accent-blue: #00d2ff;
+            --error-red: #ff5252;
         }
 
         body {
             background-color: var(--bg-dark);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Hero Section - Header */
+        /* Header & Status */
         .header {
             text-align: center;
             padding: 20px 0;
@@ -34,167 +37,231 @@
             border-radius: 20px;
         }
 
-        .header h1 { margin: 5px 0; letter-spacing: 3px; color: var(--primary-gold); }
-        .status-row { display: flex; justify-content: center; gap: 10px; font-size: 0.7rem; }
+        .header h1 { margin: 5px 0; letter-spacing: 3px; color: var(--primary-gold); font-size: 2rem; }
+        #mining-status { font-size: 0.8rem; color: var(--text-gray); margin-top: 5px; transition: 0.3s; }
 
-        /* Grid Layout - المربعات */
+        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* مربعين في كل صف */
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
 
         .grid-item {
             background: var(--card-bg);
             border-radius: 18px;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border: 1px solid #252525;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
-            cursor: pointer;
         }
 
-        .grid-item:active { transform: scale(0.95); border-color: var(--primary-gold); }
+        /* Main Mining Button Card */
+        .full-width { grid-column: span 2; padding: 25px; }
 
-        .grid-item i { font-size: 1.8rem; margin-bottom: 10px; color: var(--primary-gold); }
-        .grid-item h3 { margin: 0; font-size: 0.9rem; color: var(--text-gray); }
-        .grid-item .value { font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
-
-        /* المربع الكبير للتعدين */
-        .full-width {
-            grid-column: span 2;
-            padding: 30px;
-        }
-
-        .mining-btn {
-            width: 120px;
-            height: 120px;
+        .mining-circle {
+            width: 140px;
+            height: 140px;
             background: radial-gradient(circle, var(--primary-gold) 0%, #b8860b 100%);
             border-radius: 50%;
             margin: 15px 0;
-            box-shadow: 0 0 20px rgba(255, 202, 40, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: black;
+            box-shadow: 0 0 30px rgba(255, 202, 40, 0.2);
+            transition: transform 0.05s;
+            cursor: pointer;
         }
 
-        /* ProgressBar */
+        .mining-circle:active { transform: scale(0.92); }
+
+        /* Energy Bar */
+        .energy-container { width: 100%; margin-top: 15px; }
         .energy-bar {
             width: 100%;
-            height: 8px;
-            background: #333;
-            border-radius: 10px;
-            margin-top: 10px;
+            height: 10px;
+            background: #222;
+            border-radius: 5px;
             overflow: hidden;
+            border: 1px solid #333;
         }
         .energy-fill {
             height: 100%;
-            background: var(--accent-blue);
-            width: 100%;
-            transition: width 0.3s;
+            background: linear-gradient(90deg, var(--accent-blue), #0081ff);
+            width: 100%; /* Will be updated by JS */
+            transition: width 0.3s ease;
         }
 
+        /* Icons & Labels */
+        .grid-item i { font-size: 1.5rem; margin-bottom: 8px; color: var(--primary-gold); }
+        .grid-item h3 { margin: 0; font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase; }
+        .grid-item .value { font-size: 1rem; font-weight: bold; margin-top: 4px; }
+
+        .balance-display { font-size: 1.8rem; font-weight: 800; color: white; margin: 5px 0; }
+
+        /* Animations */
+        @keyframes float-up {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-50px); }
+        }
+        .plus-one {
+            position: absolute;
+            color: var(--primary-gold);
+            font-weight: bold;
+            pointer-events: none;
+            animation: float-up 0.6s ease-out forwards;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>NURZAO</h1>
-        <div class="status-row">
-            <span>🟢 Network: Online</span>
-            <span>🧠 AI Engine: Active</span>
-        </div>
+        <div id="mining-status">INITIALIZING...</div>
     </div>
 
     <div class="dashboard-grid">
         
-        <div class="grid-item full-width" onclick="mine()">
-            <h3>Mining Engine</h3>
-            <div class="mining-btn"><i class="fas fa-hammer"></i></div>
-            <div class="value"><span id="score">0</span> NRZ</div>
-            <div class="energy-bar"><div class="energy-fill" id="energy-bar"></div></div>
-            <div style="font-size: 0.7rem; margin-top: 5px;">Energy: <span id="energy">1000</span>/1000</div>
+        <div class="grid-item full-width" style="position: relative;">
+            <h3>Core Mining Engine</h3>
+            <div class="balance-display"><span id="score">0</span> NRZ</div>
+            
+            <div class="mining-circle" id="tap-zone" onclick="handleMine(event)">
+                <i class="fas fa-cube"></i>
+            </div>
+
+            <div class="energy-container">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 5px;">
+                    <span>⚡ ENERGY</span>
+                    <span><span id="energy">0</span> / 1000</span>
+                </div>
+                <div class="energy-bar">
+                    <div class="energy-fill" id="energy-fill"></div>
+                </div>
+            </div>
         </div>
 
         <div class="grid-item">
-            <i class="fas fa-user-circle"></i>
+            <i class="fas fa-layer-group"></i>
             <h3>Level</h3>
-            <div class="value" id="level-name">Spark</div>
+            <div class="value" id="level-name">---</div>
         </div>
 
         <div class="grid-item">
-            <i class="fas fa-tasks"></i>
+            <i class="fas fa-award"></i>
+            <h3>Global Rank</h3>
+            <div class="value">#1,204</div>
+        </div>
+
+        <div class="grid-item">
+            <i class="fas fa-list-check"></i>
             <h3>Tasks</h3>
-            <div class="value">5 Available</div>
+            <div class="value" style="color: var(--accent-blue);">5 New</div>
         </div>
 
         <div class="grid-item">
-            <i class="fas fa-users"></i>
+            <i class="fas fa-user-plus"></i>
             <h3>Referrals</h3>
             <div class="value">12 Friends</div>
         </div>
 
-        <div class="grid-item">
-            <i class="fas fa-trophy"></i>
-            <h3>Rank</h3>
-            <div class="value">#1,204</div>
-        </div>
-
     </div>
 
-    <a href="#" class="grid-item full-width" style="text-decoration: none; background: transparent; border: 1px dashed #444;">
-        <h3 style="color: var(--primary-gold);">Open in Telegram <i class="fab fa-telegram-plane"></i></h3>
-    </a>
-
     <script>
-        let score = 0;
-        let energy = 1000;
         const API_URL = "https://Naser090.pythonanywhere.com";
         const tg = window.Telegram.WebApp;
+        let isMining = false;
 
-        async function init() {
+        // 1. Initialize User from Server
+        async function initUser() {
             const user = tg.initDataUnsafe.user;
-            if (user) {
-                try {
-                    const res = await fetch(`${API_URL}/user/${user.id}`);
-                    const data = await res.json();
-                    score = data.balance;
-                    document.getElementById('score').innerText = score;
-                    document.getElementById('level-name').innerText = data.level;
-                } catch (e) { console.log("Sync error"); }
+            if (!user) {
+                document.getElementById('mining-status').innerText = "PLEASE OPEN IN TELEGRAM";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/user/init/${user.id}`);
+                const data = await res.json();
+                updateUI(data);
+                document.getElementById('mining-status').innerText = "READY TO MINE";
+            } catch (e) {
+                document.getElementById('mining-status').innerText = "CONNECTION ERROR";
+                document.getElementById('mining-status').style.color = "var(--error-red)";
             }
         }
 
-        function mine() {
-            if (energy > 0) {
-                score++;
-                energy -= 2;
-                updateUI();
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('score').innerText = score;
-            document.getElementById('energy').innerText = energy;
-            document.getElementById('energy-bar').style.width = (energy / 10) + "%";
-        }
-
-        // حفظ تلقائي كل 10 ثواني
-        setInterval(async () => {
+        // 2. Handle Tap & Mining API
+        async function handleMine(event) {
             const user = tg.initDataUnsafe.user;
-            if (user && score > 0) {
-                await fetch(`${API_URL}/sync?user_id=${user.id}&score=${score}`, {method: 'POST'});
-            }
-        }, 10000);
+            if (!user || isMining) return;
 
-        window.onload = init;
+            // Visual feedback - Floating +1
+            createFloatingText(event);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+
+            isMining = true;
+            document.getElementById('mining-status').innerText = "MINING...";
+
+            try {
+                const res = await fetch(`${API_URL}/mine?user_id=${user.id}`, { method: 'POST' });
+                const data = await res.json();
+
+                if (data.error) {
+                    document.getElementById('mining-status').innerText = data.error.toUpperCase();
+                    document.getElementById('mining-status').style.color = "var(--error-red)";
+                } else {
+                    updateUI(data);
+                    document.getElementById('mining-status').innerText = "SUCCESS (+1 NRZ)";
+                    document.getElementById('mining-status').style.color = "var(--primary-gold)";
+                }
+            } catch (e) {
+                document.getElementById('mining-status').innerText = "SYNC FAILED";
+            } finally {
+                isMining = false;
+                setTimeout(() => {
+                    if (!isMining) document.getElementById('mining-status').style.color = "var(--text-gray)";
+                }, 2000);
+            }
+        }
+
+        // 3. Update Interface
+        function updateUI(data) {
+            document.getElementById('score').innerText = data.balance.toLocaleString();
+            document.getElementById('energy').innerText = data.energy;
+            document.getElementById('level-name').innerText = data.level;
+            
+            // Update Progress Bar
+            const energyPercent = (data.energy / 1000) * 100;
+            document.getElementById('energy-fill').style.width = energyPercent + "%";
+        }
+
+        // 4. Floating Effect
+        function createFloatingText(e) {
+            const tapZone = document.getElementById('tap-zone');
+            const rect = tapZone.getBoundingClientRect();
+            const x = e.clientX || (rect.left + rect.width / 2);
+            const y = e.clientY || (rect.top + rect.height / 2);
+
+            const text = document.createElement('div');
+            text.className = 'plus-one';
+            text.innerText = '+1';
+            text.style.left = x + 'px';
+            text.style.top = y + 'px';
+            document.body.appendChild(text);
+
+            setTimeout(() => text.remove(), 600);
+        }
+
+        // App Start
+        tg.expand();
+        initUser();
     </script>
 </body>
 </html>
+                  
