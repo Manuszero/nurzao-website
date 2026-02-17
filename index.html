@@ -1,69 +1,249 @@
-<style>
-    /* إضافة أنماط للمستويات ولوحة المتصدرين */
-    .level-badge {
-        font-size: 12px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        border: 1px solid var(--neon-blue);
-        margin-bottom: 10px;
-        display: inline-block;
-        box-shadow: var(--neon-glow);
-    }
-    
-    .leaderboard-list {
-        list-style: none;
-        padding: 0;
-        text-align: left;
-    }
-
-    .leaderboard-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        border-bottom: 1px solid #222;
-    }
-</style>
-
-<div class="score-section">
-    <div id="user-level" class="level-badge">LEVEL: SPARK</div>
-    <div id="balance" class="score-value">0</div>
-    <div style="font-size: 10px; color: #888;">NRZ COINS</div>
-</div>
-
-<div id="leaderboard-page" class="page-section" style="text-align: center;">
-    <h3 style="color: var(--neon-blue);">TOP MINERS</h3>
-    <div class="leaderboard-list">
-        <div class="leaderboard-item"><span>1. CryptoKing</span><span>1,250,000 NRZ</span></div>
-        <div class="leaderboard-item"><span>2. NeonMaster</span><span>980,500 NRZ</span></div>
-        <div class="leaderboard-item"><span>3. Nurzao_Fan</span><span>750,200 NRZ</span></div>
-    </div>
-</div>
-
-<script>
-    // نظام المستويات
-    function updateLevel(score) {
-        let level = "SPARK";
-        let color = "#00f2ff";
-        
-        if (score >= 1000000) { level = "SUPERNOVA"; color = "#ffd700"; }
-        else if (score >= 100000) { level = "FUSION"; color = "#bc13fe"; }
-        else if (score >= 10000) { level = "VOLTAGE"; color = "#00f2ff"; }
-        
-        const badge = document.getElementById('user-level');
-        badge.innerText = "LEVEL: " + level;
-        badge.style.borderColor = color;
-        badge.style.color = color;
-        badge.style.boxShadow = `0 0 15px ${color}`;
-    }
-
-    // استدعاء التحديث عند كل نقرة
-    function mine() {
-        if (energy > 0) {
-            score++; energy--;
-            document.getElementById('balance').innerText = score.toLocaleString();
-            document.getElementById('energy').innerText = energy;
-            updateLevel(score); // تحديث المستوى
-            localStorage.setItem('nrz_score', score);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nurzao Elite - Neon Mining</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --neon-gold: #ffd700;
+            --dark-bg: #050505;
+            --card-bg: #121212;
+            --glow: 0 0 15px rgba(0, 242, 255, 0.6);
         }
-    }
-</script>
+
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0; padding: 0; height: 100vh;
+            display: flex; flex-direction: column; overflow: hidden;
+            user-select: none;
+        }
+
+        /* --- Header --- */
+        .top-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+        }
+
+        .project-logo {
+            width: 38px; height: 38px; border: 1px solid var(--neon-blue);
+            border-radius: 8px; box-shadow: var(--glow);
+            background: url('coin.png') center/cover;
+        }
+
+        .connect-wallet {
+            background: transparent; border: 1px solid var(--neon-blue);
+            color: var(--neon-blue); padding: 6px 15px; border-radius: 20px;
+            font-family: 'Orbitron', sans-serif; font-size: 10px;
+            box-shadow: var(--glow); cursor: pointer;
+        }
+
+        /* --- Score & Levels --- */
+        .score-section { text-align: center; margin-top: 15px; }
+        #user-level {
+            font-family: 'Orbitron', sans-serif; font-size: 10px;
+            padding: 4px 12px; border-radius: 20px; border: 1px solid var(--neon-blue);
+            color: var(--neon-blue); box-shadow: var(--glow); display: inline-block;
+        }
+        .balance-val {
+            font-family: 'Orbitron', sans-serif; font-size: 48px;
+            color: var(--neon-blue); text-shadow: var(--glow); margin: 5px 0;
+        }
+
+        /* --- Content Area --- */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; }
+        .page-section { display: none; width: 90%; height: 100%; overflow-y: auto; padding-top: 20px; }
+        .page-section.active { display: block; }
+
+        /* --- Mining Page --- */
+        .coin-btn {
+            background: none; border: none; cursor: pointer; outline: none;
+            transition: transform 0.1s ease; -webkit-tap-highlight-color: transparent;
+        }
+        .coin-btn:active { transform: scale(0.92); }
+        .coin-img { width: 260px; filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.3)); }
+
+        /* --- Task & Friend Cards --- */
+        .list-card {
+            background: var(--card-bg); border: 1px solid #222;
+            padding: 15px; border-radius: 12px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .action-btn {
+            background: var(--neon-blue); color: black; border: none;
+            padding: 7px 15px; border-radius: 8px; font-weight: bold;
+            text-decoration: none; font-size: 13px;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            display: flex; justify-content: space-around; align-items: center;
+            background: #0a0a0a; padding: 10px 0 30px 0;
+            border-top: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        .nav-item { color: #555; font-size: 11px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--neon-blue); text-shadow: var(--glow); }
+        .nav-item i { font-size: 24px; display: block; margin-bottom: 4px; }
+
+        .mine-nav-main {
+            width: 65px; height: 65px; background: var(--dark-bg);
+            border: 2px solid var(--neon-blue); border-radius: 50%;
+            margin-top: -45px; box-shadow: var(--glow);
+            display: flex; align-items: center; justify-content: center; font-size: 28px;
+        }
+
+        /* --- Animations --- */
+        .plus-one {
+            position: absolute; color: var(--neon-blue); font-family: 'Orbitron';
+            font-weight: bold; animation: flyUp 0.7s forwards; pointer-events: none;
+        }
+        @keyframes flyUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <div class="project-logo"></div>
+        <button class="connect-wallet" onclick="tg.showAlert('Wallet integration coming soon!')">CONNECT</button>
+    </div>
+
+    <div class="score-section">
+        <div id="user-level">LEVEL: SPARK</div>
+        <div id="balance" class="balance-val">0</div>
+        <div style="font-size: 11px; color: #666; letter-spacing: 2px;">NRZ TOKENS</div>
+    </div>
+
+    <div class="main-content" id="click-area">
+        <div id="mining-page" class="page-section active" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <button class="coin-btn" onclick="mine(event)">
+                <img src="coin.png" class="coin-img" alt="NRZ">
+            </button>
+            <p style="color: var(--neon-blue); margin-top: 30px; font-family: 'Orbitron';">
+                ⚡ ENERGY: <span id="energy">1000</span> / 1000
+            </p>
+        </div>
+
+        <div id="tasks-page" class="page-section">
+            <h2 style="color: var(--neon-blue); border-left: 4px solid var(--neon-blue); padding-left: 10px;">DAILY TASKS</h2>
+            <div class="list-card">
+                <div><span>📢 Join Channel</span><br><small style="color:#555">+5,000 NRZ</small></div>
+                <a href="https://t.me/your_channel" class="action-btn">JOIN</a>
+            </div>
+            <div class="list-card">
+                <div><span>🐦 Follow X</span><br><small style="color:#555">+3,000 NRZ</small></div>
+                <a href="https://x.com/your_account" class="action-btn">FOLLOW</a>
+            </div>
+        </div>
+
+        <div id="friends-page" class="page-section" style="text-align: center;">
+            <h2 style="color: var(--neon-blue);">REFERRALS</h2>
+            <div class="list-card" style="flex-direction: column; gap: 15px;">
+                <p>Invite friends and get 10% of their earnings!</p>
+                <button class="action-btn" style="width: 100%; padding: 12px;" onclick="invite()">INVITE A FRIEND</button>
+            </div>
+        </div>
+
+        <div id="leaderboard-page" class="page-section">
+            <h2 style="color: var(--neon-blue);">TOP MINERS</h2>
+            <div class="list-card"><span>1. Alex_NRZ</span><span style="color:var(--neon-gold)">2.5M</span></div>
+            <div class="list-card"><span>2. CryptoNova</span><span>1.8M</span></div>
+            <div class="list-card"><span>3. Naser_090</span><span>1.2M</span></div>
+        </div>
+        
+        <div id="profile-page" class="page-section" style="text-align: center;">
+            <div style="width:80px; height:80px; background:#222; border-radius:50%; margin:0 auto 15px; border:2px solid var(--neon-blue); display:flex; align-items:center; justify-content:center; font-size:35px;">👤</div>
+            <h2 id="user-name" style="margin-bottom:5px;">User</h2>
+            <p id="user-rank" style="color:var(--neon-blue); margin-top:0;">Novice Miner</p>
+            <div class="list-card" style="margin-top:20px;">
+                <span>Total Mined</span><span id="stat-total">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="showPage('tasks', this)"><i>📋</i>Tasks</div>
+        <div class="nav-item" onclick="showPage('friends', this)"><i>👥</i>Friends</div>
+        <div class="nav-item active" onclick="showPage('mining', this)">
+            <div class="mine-nav-main">⛏️</div>
+            Mining
+        </div>
+        <div class="nav-item" onclick="showPage('leaderboard', this)"><i>🏆</i>Leaders</div>
+        <div class="nav-item" onclick="showPage('profile', this)"><i>👤</i>Profile</div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // بيانات المستخدم
+        const userData = tg.initDataUnsafe.user;
+        if (userData) {
+            document.getElementById('user-name').innerText = userData.first_name;
+        }
+
+        let score = parseInt(localStorage.getItem('nrz_score')) || 0;
+        let energy = 1000;
+        
+        function updateUI() {
+            document.getElementById('balance').innerText = score.toLocaleString();
+            document.getElementById('stat-total').innerText = score.toLocaleString();
+            document.getElementById('energy').innerText = energy;
+            checkLevel();
+        }
+
+        function checkLevel() {
+            let lvl = "SPARK"; let clr = "#00f2ff"; let rnk = "Novice Miner";
+            if (score >= 1000000) { lvl = "SUPERNOVA"; clr = "#ffd700"; rnk = "Legendary Miner"; }
+            else if (score >= 100000) { lvl = "FUSION"; clr = "#bc13fe"; rnk = "Expert Miner"; }
+            else if (score >= 10000) { lvl = "VOLTAGE"; clr = "#00f2ff"; rnk = "Pro Miner"; }
+            
+            const badge = document.getElementById('user-level');
+            badge.innerText = "LEVEL: " + lvl;
+            badge.style.color = clr; badge.style.borderColor = clr; badge.style.boxShadow = `0 0 15px ${clr}`;
+            document.getElementById('user-rank').innerText = rnk;
+        }
+
+        function mine(event) {
+            if (energy <= 0) { tg.HapticFeedback.notificationOccurred('error'); return; }
+            score++; energy--;
+            updateUI();
+            localStorage.setItem('nrz_score', score);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            createFlyText(event.clientX, event.clientY);
+        }
+
+        function createFlyText(x, y) {
+            const el = document.createElement('div');
+            el.className = 'plus-one';
+            el.innerText = '+1';
+            el.style.left = x + 'px'; el.style.top = y + 'px';
+            document.getElementById('click-area').appendChild(el);
+            setTimeout(() => el.remove(), 700);
+        }
+
+        function showPage(pageId, navEl) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(pageId + '-page').classList.add('active');
+            navEl.classList.add('active');
+        }
+
+        function invite() {
+            const uid = userData ? userData.id : "0";
+            const bot_url = "https://t.me/YourBotName?start=" + uid;
+            const share = "https://t.me/share/url?url=" + encodeURIComponent(bot_url) + "&text=" + encodeURIComponent("Join Nurzao Mining and start earning NRZ coins today! 🚀");
+            tg.openTelegramLink(share);
+        }
+
+        // استعادة الطاقة
+        setInterval(() => { if(energy < 1000) { energy++; updateUI(); } }, 2500);
+        updateUI();
+    </script>
+</body>
+</html>
