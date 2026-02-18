@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nurzao Global | قيادة العالم</title>
+<title>Nurzao | قيادة العالم</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -12,62 +12,61 @@
   --neon-gold: #ffcf4d;
   --neon-blue: #00f2ff;
   --deep-bg: #050508;
-  --glass: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.1);
+  --glass: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.1);
 }
 
-* { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body {
-  background: var(--deep-bg); background-image: radial-gradient(circle at top, #1a1a2e 0%, #050508 100%);
-  color:white; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; height:100vh; display:flex; flex-direction:column; overflow:hidden;
+  margin:0; font-family:'Segoe UI',sans-serif; color:white;
+  background: var(--deep-bg); display:flex; flex-direction:column; height:100vh; overflow:hidden;
 }
 
-/* HEADER */
+/* Header */
 .header {
-  padding: 20px; background: var(--glass); backdrop-filter: blur(15px);
+  padding:15px 20px; background:var(--glass); backdrop-filter:blur(15px);
   border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;
 }
-.user-pill { display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.3); padding:5px 15px; border-radius:50px; border:1px solid var(--neon-blue); }
+.user-pill { display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.3); padding:5px 15px; border-radius:50px; border:1px solid var(--neon-blue);}
 .user-pill img { width:30px; height:30px; border-radius:50%; }
 #balance { font-size:2rem; font-weight:900; color:var(--neon-gold); text-shadow:0 0 20px rgba(255,207,77,0.4); }
 
-/* VIEW CONTAINERS */
-.view-container { flex-grow:1; position:relative; overflow-y:auto; display:none; padding:20px; transition:0.3s; }
-.active-view { display:flex; flex-direction:column; animation: slideUp 0.4s ease-out; }
-@keyframes slideUp { from{transform:translateY(20px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+/* Views */
+.view-container { flex-grow:1; padding:20px; overflow-y:auto; display:none; flex-direction:column; transition:0.3s; }
+.active-view { display:flex; animation:slideUp 0.4s ease-out; }
+@keyframes slideUp { from { transform: translateY(20px); opacity:0;} to { transform: translateY(0); opacity:1;} }
 
-/* MINING CIRCLE */
-.mine-circle { width:280px;height:280px;margin:auto;position:relative;display:flex;justify-content:center;align-items:center; }
-.coin-shadow { position:absolute;width:100%;height:100%;border-radius:50%;background:var(--neon-gold);filter:blur(60px);opacity:0.1; }
-.coin-btn { background:none;border:none; z-index:5; transition:0.1s; cursor:pointer; }
+/* Mining */
+.mine-circle { width:280px; height:280px; margin:auto; position:relative; display:flex; justify-content:center; align-items:center;}
+.coin-shadow { position:absolute; width:100%; height:100%; border-radius:50%; background:var(--neon-gold); filter:blur(60px); opacity:0.1;}
+.coin-btn { background:none; border:none; cursor:pointer; z-index:5; transition:0.1s;}
 .coin-btn img { width:240px; animation:pulse 3s infinite; }
-.coin-btn:active { transform:scale(0.92); }
-@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+.coin-btn:active { transform:scale(0.92);}
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);}}
 
-/* ENERGY BAR */
+/* Cards and Tasks */
+.card { background:var(--glass); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:15px;}
+.task-item { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:12px; }
+
+/* Energy Bar */
 .energy-section { padding:0 20px 20px; }
 .energy-bar-bg { height:12px; background:#111; border-radius:10px; border:1px solid var(--border); overflow:hidden; }
 #energy-fill { height:100%; width:100%; background:linear-gradient(90deg,var(--neon-gold),#fff); transition:0.3s; }
 
-/* CARDS */
-.card { background:var(--glass); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:15px; }
-.task-item { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:12px; }
-
-/* NAV */
-.nav-bar { background:rgba(0,0,0,0.9); backdrop-filter:blur(20px); border-top:1px solid var(--border); display:grid; grid-template-columns:repeat(5,1fr); padding:15px 0 30px; }
-.nav-item { text-align:center; color:#666; transition:0.3s; cursor:pointer; }
-.nav-item.active-nav { color:var(--neon-blue); text-shadow:0 0 10px var(--neon-blue); }
+/* Nav */
+.nav-bar {
+  background:rgba(0,0,0,0.9); backdrop-filter:blur(20px);
+  border-top:1px solid var(--border); display:grid; grid-template-columns:repeat(4,1fr);
+  padding:15px 0 30px;
+}
+.nav-item { text-align:center; color:#666; cursor:pointer; transition:0.3s; }
+.nav-item.active-nav { color:var(--neon-blue); text-shadow:0 0 10px var(--neon-blue);}
 .nav-item i { font-size:1.4rem; display:block; margin-bottom:5px; }
 
-/* +1 Effect */
-.floating-click { position:absolute; color:var(--neon-gold); font-weight:900; pointer-events:none; animation:flyUp 0.8s forwards; }
-@keyframes flyUp {0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-100px);} }
-
-/* BUTTONS */
-button { padding:12px;border:none;border-radius:12px;background:#6c63ff;color:white;font-weight:bold; cursor:pointer;}
-button:disabled {opacity:.4;}
-.badge { display:inline-block;background:#2ecc71;padding:3px 8px;border-radius:10px;font-size:.7rem; }
-
+/* Floating +1 effect */
+.plus-one { position:absolute; font-weight:bold; color:var(--neon-gold); font-size:24px; animation:floatUp 0.8s forwards; pointer-events:none; }
+@keyframes floatUp {0%{opacity:1; transform:translateY(0);} 100%{opacity:0; transform:translateY(-100px);}}
+.badge { display:inline-block; background:#2ecc71; padding:3px 8px; border-radius:10px; font-size:.7rem; margin-left:5px;}
 </style>
 </head>
 <body>
@@ -80,145 +79,155 @@ button:disabled {opacity:.4;}
   <div id="balance">0</div>
 </div>
 
-<!-- MINING -->
+<!-- Mining View -->
 <div id="mine-v" class="view-container active-view">
   <div class="mine-circle">
     <div class="coin-shadow"></div>
     <button class="coin-btn" id="tap-btn">
-      <img src="https://img.icons8.com/fluency/240/gold-bars.png" alt="Coin">
+      <img src="https://img.icons8.com/fluency/240/gold-bars.png">
     </button>
   </div>
   <div class="energy-section">
     <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem;">
       <span>⚡ الطاقة: <span id="e-val">0</span>/1000</span>
-      <span style="color:var(--neon-blue)">رتبتي: <span id="rank">Global</span></span>
+      <span style="color:var(--neon-blue)">رتبتي: Global</span>
     </div>
     <div class="energy-bar-bg"><div id="energy-fill"></div></div>
   </div>
 </div>
 
-<!-- TASKS -->
+<!-- Tasks View -->
 <div id="tasks-v" class="view-container">
-  <h2>مركز القيادة (المهام)</h2>
-  <div class="card" id="task-channel">
-    <div class="task-item">
-      <div>
-        <b>قناة النخبة</b>
-        <div style="font-size:0.7rem;color:#888;">انضم للقناة الرسمية على تلغرام</div>
-      </div>
-      <button class="user-pill" onclick="completeTask('channel')">+500 💰</button>
+  <h2>📋 المهام اليومية</h2>
+  <div class="card task-item">
+    <div>
+      <b>قناة التليجرام الرسمية</b><br>
+      <small style="color:#888;">اشترك للقيمة +500</small>
     </div>
+    <button onclick="completeTask('telegram')">اكمل</button>
+  </div>
+  <div class="card task-item">
+    <div>
+      <b>تابع تويتر</b><br>
+      <small style="color:#888;">تابع الحساب للحصول على النقاط</small>
+    </div>
+    <button onclick="completeTask('twitter')">اكمل</button>
+  </div>
+  <div class="card task-item">
+    <div>
+      <b>دعوة صديق</b><br>
+      <small style="color:#888;">كل صديق يزيد قوتك +10%</small>
+    </div>
+    <button onclick="completeTask('invite')">اكمل</button>
   </div>
 </div>
 
-<!-- FRIENDS -->
-<div id="friends-v" class="view-container">
-  <h2>جيش المساعدين</h2>
-  <div class="card" style="text-align:center;">
-    <p>كل صديق تجلبه يزيد من قوتك بنسبة 10%</p>
-    <button class="user-pill" id="invite-btn">
-      <i class="fas fa-share-nodes"></i> مشاركة رابط الدعوة
-    </button>
-  </div>
-  <p>عدد الأصدقاء: <span id="friend-count">0</span></p>
+<!-- Store View -->
+<div id="store-v" class="view-container">
+  <h2>🛒 البطاقات</h2>
+  <div class="card">🥉 Bronze Card – 50 نقاط <span id="bronzeStatus"></span></div>
+  <div class="card">🥈 Silver Card – 100 نقاط <span id="silverStatus"></span></div>
+  <div class="card">🥇 Gold Card – 1000 نقاط <span id="goldStatus"></span></div>
+  <div class="card">🪐 Platinum Card – 5000 نقاط <span id="platinumStatus"></span></div>
 </div>
 
-<!-- PROFILE -->
+<!-- Profile View -->
 <div id="profile-v" class="view-container">
-  <h2>السجل الشخصي</h2>
+  <h2>👤 ملفي الشخصي</h2>
   <div class="card">
-    <p>🆔 المعرف: <span id="p-id">0</span></p>
-    <p>🗓️ تاريخ الالتحاق: <span id="p-date">-</span></p>
-    <p>🚀 الرتبة: <span id="p-rank">Pioneer</span></p>
-    <p>🥈 Silver: <span id="silver-status">مقفلة</span></p>
-    <p>🥇 Gold: <span id="gold-status">مقفلة</span></p>
-    <p>🛡 Platinum: <span id="plat-status">مقفلة</span></p>
+    🆔 ID: <span id="p-id">...</span><br>
+    🎖️ البطاقة: <span id="card"></span><br>
+    ⚡ سرعة التعدين: <span id="speed"></span>
   </div>
 </div>
 
-<!-- NAV -->
+<!-- Nav -->
 <div class="nav-bar">
-  <div class="nav-item active-nav" onclick="showTab('mine-v',this)"><i class="fas fa-bolt"></i>تعدين</div>
-  <div class="nav-item" onclick="showTab('tasks-v',this)"><i class="fas fa-shield-halved"></i>المهام</div>
-  <div class="nav-item" onclick="showTab('friends-v',this)"><i class="fas fa-crown"></i>الأصدقاء</div>
-  <div class="nav-item" onclick="showTab('profile-v',this)"><i class="fas fa-user-gear"></i>ملفي</div>
-  <div class="nav-item" onclick="showStore()"><i class="fas fa-store"></i>المتجر</div>
+  <div class="nav-item active-nav" onclick="showTab('mine-v', this)"><i class="fas fa-bolt"></i>تعدين</div>
+  <div class="nav-item" onclick="showTab('tasks-v', this)"><i class="fas fa-shield-halved"></i>المهام</div>
+  <div class="nav-item" onclick="showTab('store-v', this)"><i class="fas fa-crown"></i>المتجر</div>
+  <div class="nav-item" onclick="showTab('profile-v', this)"><i class="fas fa-user-gear"></i>ملفي</div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
-const API = "https://YOUR-PYTHONANYWHERE-URL"; // غيري هنا للرابط الصحيح
-const user = tg.initDataUnsafe.user || { first_name:"القائد", id:123456 };
 
-// INITIALIZE
-let balance=0, energy=1000, friendCount=0;
+const API = "https://Naser090.pythonanywhere.com";
+const user = tg.initDataUnsafe.user || { id: 123456, first_name:"القائد", photo_url:null };
 
-// UI Init
-document.getElementById('u-name').innerText=user.first_name;
-document.getElementById('p-id').innerText=user.id;
+let balance=0, energy=1000;
 
-// Show tabs
-function showTab(tabId, el){
+// Init
+document.getElementById('u-name').innerText = user.first_name;
+document.getElementById('p-id').innerText = user.id;
+if(user.photo_url) document.getElementById('u-photo').src = user.photo_url;
+
+// Show view
+function showTab(id, el){
   document.querySelectorAll('.view-container').forEach(v=>v.classList.remove('active-view'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active-nav'));
-  document.getElementById(tabId).classList.add('active-view');
+  document.getElementById(id).classList.add('active-view');
   el.classList.add('active-nav');
 }
 
-function showStore(){
-  alert("ميزة المتجر جاهزة لاحقاً للبطاقات المدفوعة.");
+// Floating +1
+function plusOne(x,y){
+  const p=document.createElement('div');
+  p.className='plus-one';
+  p.innerText='+1';
+  p.style.left=x+'px';
+  p.style.top=y+'px';
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),800);
 }
 
-// Fetch user data from API
-async function loadUser(){
-  const r = await fetch(`${API}/user/init/${user.id}`);
-  const d = await r.json();
-  balance = d.balance || 0;
-  energy = d.energy || 1000;
-  friendCount = d.friends || 0;
+// Update UI
+function updateUI(d){
+  balance=d.balance; energy=d.energy;
+  document.getElementById('balance').innerText = balance.toLocaleString();
+  document.getElementById('e-val').innerText = energy;
+  document.getElementById('energy-fill').style.width = (energy/1000*100)+'%';
+  document.getElementById('card').innerText = d.card||d.level;
+  document.getElementById('speed').innerText = 'x'+(d.speed||1);
+  bronzeStatus.innerHTML = d.balance>=50?"<span class='badge'>مفعلة</span>":"";
+  silverStatus.innerHTML = d.balance>=100?"<span class='badge'>مفعلة</span>":"";
+  goldStatus.innerHTML = d.balance>=1000?"<span class='badge'>مفعلة</span>":"";
+  platinumStatus.innerHTML=d.balance>=5000?"<span class='badge'>مفعلة</span>":"";
+  document.getElementById('mineBtn')?.setAttribute('disabled', energy<2);
+}
 
-  document.getElementById('balance').innerText=balance.toLocaleString();
-  document.getElementById('e-val').innerText=energy;
-  document.getElementById('friend-count').innerText=friendCount;
-  document.getElementById('p-rank').innerText=d.level;
-  document.getElementById('silver-status').innerText=d.balance>=100?"مفعلة":"مقفلة";
-  document.getElementById('gold-status').innerText=d.balance>=1000?"مفعلة":"مقفلة";
-  document.getElementById('plat-status').innerText=d.balance>=5000?"مفعلة":"مقفلة";
+// Load user
+async function loadUser(){
+  const r=await fetch(`${API}/user/init/${user.id}`);
+  const d=await r.json();
+  updateUI(d);
 }
 
 // Mining click
-document.getElementById('tap-btn').addEventListener('click',async()=>{
-  if(energy<2){ tg.showAlert("طاقتك غير كافية!"); return;}
-  const res = await fetch(`${API}/mine?user_id=${user.id}`,{method:'POST'});
-  const data = await res.json();
-  if(!data.error){
-    balance = data.balance;
-    energy = data.energy;
-    document.getElementById('balance').innerText=balance.toLocaleString();
-    document.getElementById('e-val').innerText=energy;
-    tg.HapticFeedback.impactOccurred('medium');
+document.getElementById('tap-btn').addEventListener('touchstart',async(e)=>{
+  if(energy>=2){
+    const r=await fetch(`${API}/mine?user_id=${user.id}`,{method:'POST'});
+    const d=await r.json();
+    if(!d.error){
+      updateUI(d);
+      plusOne(e.touches[0].clientX, e.touches[0].clientY);
+      tg.HapticFeedback.impactOccurred('medium');
+    }
   }
 });
 
-// Complete task
+// Complete Task
 async function completeTask(task){
-  const res = await fetch(`${API}/task/${task}?user_id=${user.id}`,{method:'POST'});
-  const data = await res.json();
-  if(data.success){ loadUser(); tg.showAlert(`تم إتمام المهمة! +${data.reward} 💰`);}
+  const r=await fetch(`${API}/task/complete?user_id=${user.id}&task=${task}`,{method:'POST'});
+  const d=await r.json();
+  if(d.success) { loadUser(); tg.showAlert("تم إكمال المهمة!"); }
 }
 
-// Invite friends
-document.getElementById('invite-btn').onclick = () => {
-  const link = `https://${window.location.hostname}?start=${user.id}`;
-  navigator.clipboard.writeText(link);
-  tg.showAlert("تم نسخ رابط الدعوة!");
-}
-
-// Auto update every 10s
+// Auto refresh every 10s
 loadUser();
 setInterval(loadUser,10000);
-
 </script>
+
 </body>
-                                                        </html>
+  </html>
