@@ -3,343 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nurzao Mining - Pro Dashboard</title>
+    <title>Nurzao Mining - Full App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --gold-neon: #f39c12;
-            --blue-neon: #00d2ff;
-            --green-neon: #2ecc71;
+            --gold: #f39c12;
+            --blue: #00d2ff;
+            --bg: #080810;
             --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --bg-color: #05050a;
+            --border: rgba(255, 255, 255, 0.15);
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background: radial-gradient(circle at center, #111122 0%, var(--bg-color) 100%);
+            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg) 100%);
             color: white;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            user-select: none;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0;
+            height: 100vh; display: flex; flex-direction: column;
+            overflow: hidden; user-select: none;
         }
 
-        /* 1️⃣ القسم العلوي - Glassmorphism Header */
+        /* --- Header --- */
         .header {
-            margin: 10px;
-            padding: 15px 20px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 20px; text-align: center;
+            background: var(--glass); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        #balance { font-size: 2.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+        .user-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .user-top img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--blue); }
+
+        /* --- Main Content Views --- */
+        .content-view {
+            flex-grow: 1; display: none;
+            padding: 20px; overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+        .active-view { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Mining View --- */
+        .coin-btn { background: none; border: none; cursor: pointer; position: relative; }
+        .coin-btn img { width: 250px; filter: drop-shadow(0 0 30px var(--gold)); }
+        .coin-btn:active { transform: scale(0.95); }
+
+        /* --- UI Elements --- */
+        .card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 20px; padding: 15px; width: 100%; margin-bottom: 15px;
+        }
+        .btn-action {
+            background: var(--gold); color: black; border: none;
+            padding: 12px 25px; border-radius: 12px; font-weight: bold;
+            cursor: pointer; width: 100%; margin-top: 10px;
         }
 
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--blue-neon);
-            box-shadow: 0 0 10px var(--blue-neon);
-            object-fit: cover;
+        /* --- Bottom Nav --- */
+        .nav-bar {
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            padding: 10px 5px; padding-bottom: 25px;
         }
-
-        .user-meta { display: flex; flex-direction: column; }
-        #username { font-weight: bold; font-size: 1rem; color: #fff; margin-bottom: 4px; }
-        
-        #level-badge {
-            display: inline-block;
-            background: linear-gradient(90deg, var(--blue-neon), #0081a7);
-            color: #000;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 2px 10px;
-            border-radius: 10px;
-            text-transform: uppercase;
-            width: fit-content;
-            box-shadow: 0 0 10px var(--blue-neon);
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: #888; font-size: 0.7rem; cursor: pointer; transition: 0.3s;
         }
+        .nav-item.active { color: var(--gold); }
+        .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
 
-        #balance-container {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--gold-neon);
-            text-shadow: 0 0 20px rgba(243, 156, 18, 0.7);
-            letter-spacing: -1px;
+        /* --- Floating Text --- */
+        .plus-one {
+            position: absolute; color: var(--gold); font-weight: bold;
+            font-size: 24px; animation: floatUp 0.8s forwards; pointer-events: none;
         }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
 
-        /* 2️⃣ القسم الأوسط - Mining Zone */
-        .mine-zone {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .mining-circle {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* تأثير التوهج خلف الزر */
-        .glow-effect {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: var(--gold-neon);
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.15;
-            animation: pulse-glow 3s infinite ease-in-out;
-        }
-
-        .coin-btn {
-            background: none;
-            border: none;
-            z-index: 5;
-            cursor: pointer;
-            transition: transform 0.05s cubic-bezier(0.1, 0.7, 1.0, 0.1);
-        }
-
-        .coin-btn img {
-            width: 240px;
-            filter: drop-shadow(0 0 25px var(--gold-neon));
-        }
-
-        .coin-btn:active { transform: scale(0.92); }
-
-        /* نص +1 الطائر */
-        .floating-text {
-            position: absolute;
-            color: var(--gold-neon);
-            font-size: 32px;
-            font-weight: 900;
-            pointer-events: none;
-            z-index: 10;
-            animation: float-up 0.7s ease-out forwards;
-        }
-
-        @keyframes float-up {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-120px); }
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { transform: scale(1); opacity: 0.15; }
-            50% { transform: scale(1.2); opacity: 0.25; }
-        }
-
-        /* 3️⃣ القسم السفلي - Power Station */
-        .footer {
-            margin: 10px;
-            padding: 20px;
-            background: rgba(10, 10, 20, 0.8);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid var(--glass-border);
-            border-radius: 30px 30px 20px 20px;
-        }
-
-        .energy-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 10px;
-        }
-
-        .energy-val { font-size: 1.2rem; font-weight: bold; color: #fff; }
-        .energy-val span { color: var(--gold-neon); font-size: 0.8rem; }
-
-        #recharge-status {
-            font-size: 0.7rem;
-            color: var(--green-neon);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: blink 2s infinite;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 14px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-        }
-
-        #energy-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold-neon), #ffe082);
-            box-shadow: 0 0 15px var(--gold-neon);
-            transition: width 0.3s ease;
-        }
-
-        .stats-footer {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            padding: 10px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-card span { display: block; font-size: 0.6rem; color: #888; margin-bottom: 3px; }
-        .stat-card b { font-size: 0.8rem; color: #ddd; }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
+        /* --- Progress Bar --- */
+        .energy-container { width: 90%; margin: 15px auto; }
+        .bar-bg { width: 100%; height: 10px; background: #222; border-radius: 5px; overflow: hidden; }
+        #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, var(--gold), #ffeb3b); transition: 0.3s; }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <div class="header">
-        <img id="u-avatar" src="https://ui-avatars.com/api/?name=N&background=00d2ff&color=fff" class="avatar">
-        <div class="user-meta">
-            <div id="username">تحميل...</div>
-            <div id="level-badge">Spark</div>
+        <div class="user-top">
+            <img id="u-avatar" src="https://ui-avatars.com/api/?name=N">
+            <span id="u-name">...</span>
+            <span style="background:var(--blue); font-size:0.6rem; padding:2px 8px; border-radius:10px; color:black;">NOVA</span>
         </div>
-        <div id="balance-container">0</div>
+        <div id="balance">0</div>
     </div>
 
-    <div class="mine-zone" id="click-area">
-        <div class="mining-circle">
-            <div class="glow-effect"></div>
-            <button class="coin-btn" id="mineBtn">
-                <img src="https://img.icons8.com/fluency/240/gold-bars.png" alt="Mine">
-            </button>
-        </div>
-    </div>
-
-    <div class="footer">
-        <div class="energy-header">
-            <div class="energy-val">⚡ <span id="energy-now">1000</span><span> / 1000</span></div>
-            <div id="recharge-status">نظام الشحن نشط</div>
-        </div>
-        
-        <div class="progress-bar-bg">
-            <div id="energy-fill"></div>
-        </div>
-
-        <div class="stats-footer">
-            <div class="stat-card"><span>ID المستخدم</span><b id="uid-view">0000</b></div>
-            <div class="stat-card"><span>المهمات</span><b>0</b></div>
-            <div class="stat-card"><span>الترتيب</span><b>#--</b></div>
+    <div id="mine-view" class="content-view active-view">
+        <button class="coin-btn" id="mineBtn">
+            <img src="https://img.icons8.com/fluency/240/gold-bars.png">
+        </button>
+        <div class="energy-container">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;">
+                <span>⚡ <span id="e-now">1000</span>/1000</span>
+                <span id="e-status">Recharging...</span>
+            </div>
+            <div class="bar-bg"><div id="energy-fill"></div></div>
         </div>
     </div>
 
-    <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-20.mp3" preload="auto"></audio>
+    <div id="tasks-view" class="content-view">
+        <h2 style="color:var(--blue)">المهام اليومية</h2>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b>قناة التليجرام الرسمية</b>
+                    <p style="font-size:0.7rem; color:#aaa; margin:5px 0;">انضم واحصل على +5000 نقطة</p>
+                </div>
+                <button class="btn-action" onclick="window.open('https://t.me/NurzaoOfficial', '_blank')" style="width:auto;">انضم</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="friends-view" class="content-view">
+        <h2 style="color:var(--gold)">دعوة الأصدقاء</h2>
+        <div class="card" style="text-align:center;">
+            <i class="fas fa-users" style="font-size:3rem; margin-bottom:15px; color:var(--blue);"></i>
+            <p>شارك الرابط مع أصدقائك واحصل على 10% من تعدينهم!</p>
+            <button class="btn-action" id="inviteBtn">نسخ رابط الدعوة</button>
+        </div>
+    </div>
+
+    <div id="profile-view" class="content-view">
+        <h2 style="color:var(--blue)">الملف الشخصي</h2>
+        <div class="card">
+            <div style="margin-bottom:10px;">👤 الاسم: <b id="p-name">...</b></div>
+            <div style="margin-bottom:10px;">🆔 المعرف: <b id="p-id">...</b></div>
+            <div style="margin-bottom:10px;">💰 إجمالي النقاط: <b id="p-balance" style="color:var(--gold)">0</b></div>
+            <div style="margin-bottom:10px;">📅 وقت الانضمام: <b id="p-joined">Feb 2026</b></div>
+            <div style="margin-bottom:10px;">🏆 المهام المكتملة: <b>0</b></div>
+        </div>
+    </div>
+
+    <div id="store-view" class="content-view">
+        <h2 style="color:var(--gold)">المتجر</h2>
+        <p>قريباً.. تطويرات لسرعة التعدين!</p>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="showView('mine-view', this)"><i class="fas fa-hammer"></i>تعدين</div>
+        <div class="nav-item" onclick="showView('tasks-view', this)"><i class="fas fa-tasks"></i>المهام</div>
+        <div class="nav-item" onclick="showView('friends-view', this)"><i class="fas fa-user-friends"></i>الأصدقاء</div>
+        <div class="nav-item" onclick="showView('store-view', this)"><i class="fas fa-shopping-cart"></i>المتجر</div>
+        <div class="nav-item" onclick="showView('profile-view', this)"><i class="fas fa-user-circle"></i>أنا</div>
+    </div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    const clickSound = document.getElementById('clickSound');
     tg.expand();
-    tg.enableClosingConfirmation();
 
     const API_URL = "https://Naser090.pythonanywhere.com";
-    const user = tg.initDataUnsafe.user || { id: 1234567, first_name: "مستخدم تجريبي" };
+    const user = tg.initDataUnsafe.user || { id: 12345, first_name: "Guest" };
 
+    let currentBalance = 0;
     let currentEnergy = 1000;
 
-    // تهيئة البيانات
-    document.getElementById('username').innerText = user.first_name;
-    document.getElementById('uid-view').innerText = user.id;
-    if(user.photo_url) document.getElementById('u-avatar').src = user.photo_url;
-
-    // دالة جلب البيانات من السيرفر
-    async function syncData() {
-        try {
-            const r = await fetch(`${API_URL}/user/init/${user.id}`);
-            const d = await r.json();
-            updateDisplay(d);
-        } catch(e) { setTimeout(syncData, 3000); }
+    // --- وظيفة التنقل ---
+    function showView(viewId, el) {
+        document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active-view'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active-view');
+        el.classList.add('active');
     }
 
-    // دالة التعدين
-    async function doMine(e) {
-        e.preventDefault();
-        if(currentEnergy < 2) {
-            tg.HapticFeedback.notificationOccurred('warning');
-            return;
-        }
+    // --- ربط البيانات ---
+    async function init() {
+        document.getElementById('u-name').innerText = user.first_name;
+        document.getElementById('p-name').innerText = user.first_name;
+        document.getElementById('p-id').innerText = user.id;
+        if(user.photo_url) document.getElementById('u-avatar').src = user.photo_url;
 
-        // 1. تأثيرات بصرية وصوتية فورية (Client-side)
-        showFloatingText(e);
+        try {
+            const res = await fetch(`${API_URL}/user/init/${user.id}`);
+            const data = await res.json();
+            updateUI(data);
+        } catch(e) { console.error("Init failed"); }
+    }
+
+    // --- عملية التعدين ---
+    async function handleMine(e) {
+        if(currentEnergy < 2) { tg.HapticFeedback.notificationOccurred('error'); return; }
+        
+        createPlusOne(e);
         tg.HapticFeedback.impactOccurred('medium');
-        clickSound.currentTime = 0;
-        clickSound.play();
 
-        // 2. إرسال للسيرفر
         try {
             const res = await fetch(`${API_URL}/mine?user_id=${user.id}`, { method: 'POST' });
             const data = await res.json();
-            if(!data.error) updateDisplay(data);
-        } catch(e) { console.error("Server Offline"); }
+            updateUI(data);
+        } catch(e) { console.error("Mine failed"); }
     }
 
-    function showFloatingText(e) {
-        const rect = document.getElementById('click-area').getBoundingClientRect();
+    function createPlusOne(e) {
         const touch = e.touches ? e.touches[0] : e;
-        const x = touch.clientX;
-        const y = touch.clientY;
-
-        const txt = document.createElement('div');
-        txt.className = 'floating-text';
-        txt.innerText = '+1';
-        txt.style.left = `${x - 15}px`;
-        txt.style.top = `${y - 40}px`;
-        
-        document.body.appendChild(txt);
-        setTimeout(() => txt.remove(), 700);
+        const p = document.createElement('div');
+        p.className = 'plus-one'; p.innerText = '+1';
+        p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 800);
     }
 
-    function updateDisplay(data) {
+    function updateUI(data) {
+        currentBalance = data.balance;
         currentEnergy = data.energy;
-        document.getElementById('balance-container').innerText = data.balance.toLocaleString();
-        document.getElementById('energy-now').innerText = data.energy;
-        document.getElementById('level-badge').innerText = data.level;
-
-        const fill = document.getElementById('energy-fill');
-        const percent = (data.energy / 1000) * 100;
-        fill.style.width = percent + '%';
-
-        // تغيير اللون عند ضعف الطاقة
-        fill.style.background = percent < 20 ? 
-            "linear-gradient(90deg, #ff4b2b, #ff416c)" : 
-            "linear-gradient(90deg, #f39c12, #ffe082)";
+        document.getElementById('balance').innerText = data.balance.toLocaleString();
+        document.getElementById('p-balance').innerText = data.balance.toLocaleString();
+        document.getElementById('e-now').innerText = data.energy;
+        document.getElementById('energy-fill').style.width = (data.energy/1000*100) + '%';
     }
 
-    // المستمعات
-    document.getElementById('mineBtn').addEventListener('touchstart', doMine);
-    
-    // تشغيل اللعبة
-    syncData();
+    // --- زر دعوة الأصدقاء ---
+    document.getElementById('inviteBtn').onclick = () => {
+        const link = `https://t.me/NurzaoBot?start=${user.id}`;
+        navigator.clipboard.writeText(link);
+        tg.showAlert("تم نسخ رابط الدعوة! شاركه مع أصدقائك.");
+    };
 
-    // تحديث الحالة بصرياً كل 10 ثواني
-    setInterval(() => {
-        if(currentEnergy < 1000) syncData();
-    }, 10000);
-
+    document.getElementById('mineBtn').addEventListener('touchstart', handleMine);
+    init();
+    setInterval(init, 10000); // تحديث دوري للطاقة
 </script>
 </body>
 </html>
