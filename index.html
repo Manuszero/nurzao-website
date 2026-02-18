@@ -3,146 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nurzao Mining</title>
+    <title>Nurzao Mining - Premium Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --gold-neon: #f39c12;
+            --blue-neon: #00d2ff;
+            --glass: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --bg-color: #080810;
+        }
+
         body {
-            background-color: #000;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #080810 100%);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            user-select: none;
-        }
-        .container {
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100vh;
-            padding: 20px;
+            overflow: hidden;
+            user-select: none;
+            touch-action: manipulation;
         }
+
+        /* 1️⃣ القسم العلوي - معلومات المستخدم */
         .header {
-            background: rgba(255, 255, 255, 0.1);
+            margin: 15px;
             padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        #balance {
-            font-size: 3rem;
+
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--blue-neon);
+            box-shadow: 0 0 10px var(--blue-neon);
+        }
+
+        #username { font-weight: bold; font-size: 0.9rem; color: #eee; }
+
+        #level-badge {
+            background: linear-gradient(45deg, var(--blue-neon), #0081a7);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
             font-weight: bold;
-            color: #f39c12;
-            text-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
         }
+
+        .balance-section { text-align: left; }
+        
+        #balance-container {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--gold-neon);
+            text-shadow: 0 0 15px rgba(243, 156, 18, 0.6);
+        }
+
+        /* 2️⃣ القسم الأوسط - منطقة التعدين */
+        .mine-zone {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
         .coin-btn {
             background: none;
             border: none;
-            outline: none;
             cursor: pointer;
-            transition: transform 0.1s;
+            outline: none;
+            position: relative;
+            z-index: 2;
         }
-        .coin-btn:active {
-            transform: scale(0.95);
-        }
+
         .coin-btn img {
-            width: 250px;
-            filter: drop-shadow(0 0 20px #f39c12);
+            width: 260px;
+            filter: drop-shadow(0 0 30px var(--gold-neon));
+            transition: transform 0.05s ease;
         }
-        .stats {
+
+        .coin-btn:active img { transform: scale(0.92); }
+
+        /* تأثير النص الطائر +1 */
+        .plus-one {
+            position: absolute;
+            color: var(--gold-neon);
+            font-weight: 900;
+            font-size: 28px;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-150px) scale(1.5); }
+        }
+
+        /* 3️⃣ القسم السفلي - الطاقة والمعلومات */
+        .footer {
+            margin: 15px;
+            padding: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+        }
+
+        .energy-header {
             display: flex;
-            justify-content: space-around;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 20px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
-        .stat-box { font-size: 1.1rem; }
-        .stat-box span { display: block; color: #aaa; font-size: 0.8rem; }
+
+        .energy-title { font-weight: bold; font-size: 1rem; color: #fff; }
+        
+        #recharge-status { font-size: 0.75rem; color: #aaa; }
+
+        .progress-container {
+            width: 100%;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        #energy-bar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #f39c12, #f1c40f);
+            box-shadow: 0 0 10px var(--gold-neon);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 10px;
+        }
+
+        .stat-item { font-size: 0.7rem; color: #888; text-align: center; }
+        .stat-item b { display: block; color: #ddd; font-size: 0.85rem; }
+
     </style>
 </head>
 <body>
 
-<div class="container">
     <div class="header">
-        <div id="username">جاري التحميل...</div>
-        <div id="balance">0</div>
-        <div id="level">Level: Spark</div>
-    </div>
-
-    <button class="coin-btn" id="mineBtn">
-        <img src="https://img.icons8.com/fluency/240/gold-bars.png" alt="Mine">
-    </button>
-
-    <div class="stats">
-        <div class="stat-box">
-            <span id="energy">1000</span>
-            <span>الطاقة ⚡</span>
+        <div class="user-info">
+            <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=00d2ff&color=fff" class="avatar">
+            <div>
+                <div id="username">تحميل...</div>
+                <div id="level-badge">Spark</div>
+            </div>
         </div>
-        <div class="stat-box">
-            <span id="user_id_display">0000</span>
-            <span>ID المستخدم</span>
+        <div class="balance-section">
+            <div id="balance-container">0</div>
         </div>
     </div>
-</div>
+
+    <div class="mine-zone">
+        <button class="coin-btn" id="mineBtn">
+            <img src="https://img.icons8.com/fluency/240/gold-bars.png" alt="Mine">
+        </button>
+    </div>
+
+    <div class="footer">
+        <div class="energy-header">
+            <div class="energy-title">⚡ <span id="energy-text">1000</span>/1000</div>
+            <div id="recharge-status">جاري الشحن...</div>
+        </div>
+        <div class="progress-container">
+            <div id="energy-bar"></div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-item">ID المستخدم<b id="user-id-val">0000</b></div>
+            <div class="stat-item">الحالة<b>نشط</b></div>
+        </div>
+    </div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // تمديد التطبيق ليملأ الشاشة
+    tg.expand();
 
-    // رابط السيرفر الخاص بك على PythonAnywhere
     const API_URL = "https://Naser090.pythonanywhere.com";
+    const userData = tg.initDataUnsafe.user || { id: 12345, first_name: "Guest" };
 
-    // جلب بيانات المستخدم من تليجرام
-    const user = tg.initDataUnsafe.user || { id: 12345, first_name: "Guest" };
+    let currentEnergy = 1000;
 
-    // تحديث الواجهة الأولية
-    document.getElementById('username').innerText = user.first_name;
-    document.getElementById('user_id_display').innerText = user.id;
+    // إعداد بيانات تليجرام
+    document.getElementById('username').innerText = userData.first_name;
+    document.getElementById('user-id-val').innerText = userData.id;
+    if(userData.photo_url) {
+        document.getElementById('user-avatar').src = userData.photo_url;
+    }
 
-    // 1. وظيفة جلب البيانات عند فتح اللعبة
     async function initGame() {
         try {
-            const response = await fetch(`${API_URL}/user/init/${user.id}`);
-            const data = await response.json();
+            const res = await fetch(`${API_URL}/user/init/${userData.id}`);
+            const data = await res.json();
             updateUI(data);
-        } catch (error) {
-            console.error("خطأ في الاتصال بالسيرفر:", error);
+        } catch (e) {
+            setTimeout(initGame, 2000);
         }
     }
 
-    // 2. وظيفة التعدين عند الضغط
-    async function mine() {
+    function createPlusOne(e) {
+        const touch = e.touches ? e.touches[0] : e;
+        const plus = document.createElement('div');
+        plus.className = 'plus-one';
+        plus.innerText = '+1';
+        plus.style.left = touch.clientX + 'px';
+        plus.style.top = touch.clientY + 'px';
+        document.body.appendChild(plus);
+        setTimeout(() => plus.remove(), 800);
+    }
+
+    async function handleMine(e) {
+        e.preventDefault();
+        if (currentEnergy < 2) {
+            tg.HapticFeedback.notificationOccurred('error');
+            return;
+        }
+
+        createPlusOne(e);
+        tg.HapticFeedback.impactOccurred('medium');
+
         try {
-            const response = await fetch(`${API_URL}/mine?user_id=${user.id}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
-            
-            if (data.error) {
-                tg.showAlert("نفدت الطاقة! انتظر قليلاً للشحن.");
-            } else {
-                updateUI(data);
-                // تأثير اهتزاز خفيف عند النجاح
-                tg.HapticFeedback.impactOccurred('medium');
-            }
-        } catch (error) {
-            console.error("فشل التعدين:", error);
-        }
+            const res = await fetch(`${API_URL}/mine?user_id=${userData.id}`, { method: 'POST' });
+            const data = await res.json();
+            if (!data.error) updateUI(data);
+        } catch (e) { console.error("API Error"); }
     }
 
-    // وظيفة تحديث الأرقام على الشاشة
     function updateUI(data) {
-        document.getElementById('balance').innerText = data.balance.toLocaleString();
-        document.getElementById('energy').innerText = data.energy;
-        document.getElementById('level').innerText = "Level: " + data.level;
+        currentEnergy = data.energy;
+        document.getElementById('balance-container').innerText = data.balance.toLocaleString();
+        document.getElementById('energy-text').innerText = data.energy;
+        document.getElementById('level-badge').innerText = data.level;
+
+        const bar = document.getElementById('energy-bar');
+        const percentage = (data.energy / 1000) * 100;
+        bar.style.width = percentage + '%';
+        
+        if(percentage < 20) bar.style.background = "linear-gradient(90deg, #e74c3c, #ff4d4d)";
+        else bar.style.background = "linear-gradient(90deg, #f39c12, #f1c40f)";
     }
 
-    // ربط زر الضغط بالدالة
-    document.getElementById('mineBtn').addEventListener('click', mine);
-
-    // تشغيل اللعبة
+    document.getElementById('mineBtn').addEventListener('touchstart', handleMine);
     initGame();
-</script>
 
+    // تحديث حالة الشحن كل 5 ثوانٍ
+    setInterval(() => {
+        document.getElementById('recharge-status').innerText = currentEnergy < 1000 ? "جاري الشحن (+5/د)" : "الطاقة ممتلئة ✅";
+    }, 5000);
+
+</script>
 </body>
 </html>
