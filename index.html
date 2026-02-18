@@ -1,236 +1,262 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nurzao Mining - Full App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --gold: #f39c12;
-            --blue: #00d2ff;
-            --bg: #080810;
-            --glass: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.15);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nurzao Mining - Full App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+:root{
+    --gold:#f39c12; --blue:#00d2ff; --green:#2ecc71; --bg:#080810;
+    --glass:rgba(255,255,255,0.08); --border:rgba(255,255,255,0.15);
+}
+body{
+    background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg) 100%);
+    color:white; font-family:'Segoe UI',sans-serif; margin:0;padding:0;
+    height:100vh; display:flex; flex-direction:column; overflow:hidden; user-select:none;
+}
 
-        body {
-            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg) 100%);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0; padding: 0;
-            height: 100vh; display: flex; flex-direction: column;
-            overflow: hidden; user-select: none;
-        }
+/* Header */
+.header{
+    padding:20px;text-align:center;
+    background:var(--glass); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+}
+#balance{font-size:2.5rem;font-weight:900;color:var(--gold);text-shadow:0 0 20px rgba(243,156,18,0.5);}
+.user-top{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:5px;}
+.user-top img{width:30px; height:30px; border-radius:50%; border:1px solid var(--blue);}
 
-        /* --- Header --- */
-        .header {
-            padding: 20px; text-align: center;
-            background: var(--glass); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-        }
-        #balance { font-size: 2.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
-        .user-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
-        .user-top img { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--blue); }
+/* Content Views */
+.content-view{
+    flex-grow:1; display:none; padding:20px; overflow-y:auto; animation:fadeIn 0.3s ease;
+}
+.active-view{display:flex; flex-direction:column; align-items:center; justify-content:center;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
-        /* --- Main Content Views --- */
-        .content-view {
-            flex-grow: 1; display: none;
-            padding: 20px; overflow-y: auto;
-            animation: fadeIn 0.3s ease;
-        }
-        .active-view { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+/* Mining */
+.coin-btn{background:none; border:none; cursor:pointer; position:relative;}
+.coin-btn img{width:250px; filter:drop-shadow(0 0 30px var(--gold));}
+.coin-btn:active{transform:scale(0.95);}
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* Cards */
+.card{
+    background:var(--glass); border:1px solid var(--border);
+    border-radius:20px; padding:15px; width:100%; margin-bottom:15px;
+}
+.btn-action{
+    background:var(--gold); color:black; border:none;
+    padding:12px 25px; border-radius:12px; font-weight:bold;
+    cursor:pointer; width:100%; margin-top:10px;
+}
 
-        /* --- Mining View --- */
-        .coin-btn { background: none; border: none; cursor: pointer; position: relative; }
-        .coin-btn img { width: 250px; filter: drop-shadow(0 0 30px var(--gold)); }
-        .coin-btn:active { transform: scale(0.95); }
+/* Nav Bar */
+.nav-bar{
+    background:rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+    border-top:1px solid var(--border);
+    display:grid; grid-template-columns:repeat(5,1fr);
+    padding:10px 5px; padding-bottom:25px;
+}
+.nav-item{
+    display:flex; flex-direction:column; align-items:center;
+    color:#888; font-size:0.7rem; cursor:pointer; transition:0.3s;
+}
+.nav-item.active{color:var(--gold);}
+.nav-item i{font-size:1.2rem;margin-bottom:4px;}
 
-        /* --- UI Elements --- */
-        .card {
-            background: var(--glass); border: 1px solid var(--border);
-            border-radius: 20px; padding: 15px; width: 100%; margin-bottom: 15px;
-        }
-        .btn-action {
-            background: var(--gold); color: black; border: none;
-            padding: 12px 25px; border-radius: 12px; font-weight: bold;
-            cursor: pointer; width: 100%; margin-top: 10px;
-        }
+/* Floating +1 */
+.plus-one{
+    position:absolute; color:var(--gold); font-weight:bold;
+    font-size:24px; animation:floatUp 0.8s forwards; pointer-events:none;
+}
+@keyframes floatUp{0%{opacity:1; transform:translateY(0);}100%{opacity:0; transform:translateY(-100px);}}
 
-        /* --- Bottom Nav --- */
-        .nav-bar {
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            padding: 10px 5px; padding-bottom: 25px;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: #888; font-size: 0.7rem; cursor: pointer; transition: 0.3s;
-        }
-        .nav-item.active { color: var(--gold); }
-        .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
-
-        /* --- Floating Text --- */
-        .plus-one {
-            position: absolute; color: var(--gold); font-weight: bold;
-            font-size: 24px; animation: floatUp 0.8s forwards; pointer-events: none;
-        }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
-
-        /* --- Progress Bar --- */
-        .energy-container { width: 90%; margin: 15px auto; }
-        .bar-bg { width: 100%; height: 10px; background: #222; border-radius: 5px; overflow: hidden; }
-        #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, var(--gold), #ffeb3b); transition: 0.3s; }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+/* Energy Bar */
+.energy-container{width:90%; margin:15px auto;}
+.bar-bg{width:100%; height:10px; background:#222; border-radius:5px; overflow:hidden;}
+#energy-fill{width:100%; height:100%; background:linear-gradient(90deg,var(--gold),#ffeb3b); transition:0.3s;}
+</style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="user-top">
-            <img id="u-avatar" src="https://ui-avatars.com/api/?name=N">
-            <span id="u-name">...</span>
-            <span style="background:var(--blue); font-size:0.6rem; padding:2px 8px; border-radius:10px; color:black;">NOVA</span>
-        </div>
-        <div id="balance">0</div>
+<div class="header">
+    <div class="user-top">
+        <img id="u-avatar" src="https://ui-avatars.com/api/?name=N">
+        <span id="u-name">...</span>
+        <span style="background:var(--blue); font-size:0.6rem; padding:2px 8px; border-radius:10px; color:black;">NOVA</span>
     </div>
+    <div id="balance">0</div>
+</div>
 
-    <div id="mine-view" class="content-view active-view">
-        <button class="coin-btn" id="mineBtn">
-            <img src="https://img.icons8.com/fluency/240/gold-bars.png">
-        </button>
-        <div class="energy-container">
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;">
-                <span>⚡ <span id="e-now">1000</span>/1000</span>
-                <span id="e-status">Recharging...</span>
+<!-- Mining View -->
+<div id="mine-view" class="content-view active-view">
+    <button class="coin-btn" id="mineBtn">
+        <img src="https://img.icons8.com/fluency/240/gold-bars.png">
+    </button>
+    <div class="energy-container">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:5px;">
+            <span>⚡ <span id="e-now">1000</span>/1000</span>
+            <span id="e-status">Recharging...</span>
+        </div>
+        <div class="bar-bg"><div id="energy-fill"></div></div>
+    </div>
+</div>
+
+<!-- Tasks View -->
+<div id="tasks-view" class="content-view">
+    <h2 style="color:var(--blue)">المهام اليومية</h2>
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <b>قناة التليجرام الرسمية</b>
+                <p style="font-size:0.7rem; color:#aaa; margin:5px 0;">انضم واحصل على +5000 نقطة</p>
             </div>
-            <div class="bar-bg"><div id="energy-fill"></div></div>
+            <button class="btn-action" onclick="window.open('https://t.me/NurzaoOfficial', '_blank')" style="width:auto;">انضم</button>
         </div>
     </div>
+</div>
 
-    <div id="tasks-view" class="content-view">
-        <h2 style="color:var(--blue)">المهام اليومية</h2>
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <b>قناة التليجرام الرسمية</b>
-                    <p style="font-size:0.7rem; color:#aaa; margin:5px 0;">انضم واحصل على +5000 نقطة</p>
-                </div>
-                <button class="btn-action" onclick="window.open('https://t.me/NurzaoOfficial', '_blank')" style="width:auto;">انضم</button>
-            </div>
+<!-- Friends View -->
+<div id="friends-view" class="content-view">
+    <h2 style="color:var(--gold)">دعوة الأصدقاء</h2>
+    <div class="card" style="text-align:center;">
+        <i class="fas fa-users" style="font-size:3rem; margin-bottom:15px; color:var(--blue);"></i>
+        <p>شارك الرابط مع أصدقائك واحصل على 10% من تعدينهم!</p>
+        <button class="btn-action" id="inviteBtn">نسخ رابط الدعوة</button>
+    </div>
+</div>
+
+<!-- Store View -->
+<div id="store-view" class="content-view">
+    <h2 style="color:var(--gold)">المتجر</h2>
+    <p>بطاقات مجانية عند جمع عدد معين من النقاط:</p>
+    <div id="store-cards">
+        <div class="card" data-required="5000">
+            <b>بطاقة فضية</b>
+            <p>تتفعل عند جمع 5000 نقطة</p>
+            <button class="btn-action card-btn" disabled>غير مفعلة</button>
+        </div>
+        <div class="card" data-required="10000">
+            <b>بطاقة ذهبية</b>
+            <p>تتفعل عند جمع 10000 نقطة</p>
+            <button class="btn-action card-btn" disabled>غير مفعلة</button>
+        </div>
+        <div class="card" data-required="20000">
+            <b>بطاقة بلاتينية</b>
+            <p>تتفعل عند جمع 20000 نقطة</p>
+            <button class="btn-action card-btn" disabled>غير مفعلة</button>
         </div>
     </div>
+</div>
 
-    <div id="friends-view" class="content-view">
-        <h2 style="color:var(--gold)">دعوة الأصدقاء</h2>
-        <div class="card" style="text-align:center;">
-            <i class="fas fa-users" style="font-size:3rem; margin-bottom:15px; color:var(--blue);"></i>
-            <p>شارك الرابط مع أصدقائك واحصل على 10% من تعدينهم!</p>
-            <button class="btn-action" id="inviteBtn">نسخ رابط الدعوة</button>
-        </div>
+<!-- Profile View -->
+<div id="profile-view" class="content-view">
+    <h2 style="color:var(--blue)">الملف الشخصي</h2>
+    <div class="card">
+        <div style="margin-bottom:10px;">👤 الاسم: <b id="p-name">...</b></div>
+        <div style="margin-bottom:10px;">🆔 المعرف: <b id="p-id">...</b></div>
+        <div style="margin-bottom:10px;">💰 إجمالي النقاط: <b id="p-balance" style="color:var(--gold)">0</b></div>
+        <div style="margin-bottom:10px;">📅 وقت الانضمام: <b id="p-joined">Feb 2026</b></div>
+        <div style="margin-bottom:10px;">🏆 المهام المكتملة: <b>0</b></div>
     </div>
+</div>
 
-    <div id="profile-view" class="content-view">
-        <h2 style="color:var(--blue)">الملف الشخصي</h2>
-        <div class="card">
-            <div style="margin-bottom:10px;">👤 الاسم: <b id="p-name">...</b></div>
-            <div style="margin-bottom:10px;">🆔 المعرف: <b id="p-id">...</b></div>
-            <div style="margin-bottom:10px;">💰 إجمالي النقاط: <b id="p-balance" style="color:var(--gold)">0</b></div>
-            <div style="margin-bottom:10px;">📅 وقت الانضمام: <b id="p-joined">Feb 2026</b></div>
-            <div style="margin-bottom:10px;">🏆 المهام المكتملة: <b>0</b></div>
-        </div>
-    </div>
-
-    <div id="store-view" class="content-view">
-        <h2 style="color:var(--gold)">المتجر</h2>
-        <p>قريباً.. تطويرات لسرعة التعدين!</p>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="showView('mine-view', this)"><i class="fas fa-hammer"></i>تعدين</div>
-        <div class="nav-item" onclick="showView('tasks-view', this)"><i class="fas fa-tasks"></i>المهام</div>
-        <div class="nav-item" onclick="showView('friends-view', this)"><i class="fas fa-user-friends"></i>الأصدقاء</div>
-        <div class="nav-item" onclick="showView('store-view', this)"><i class="fas fa-shopping-cart"></i>المتجر</div>
-        <div class="nav-item" onclick="showView('profile-view', this)"><i class="fas fa-user-circle"></i>أنا</div>
-    </div>
+<!-- Bottom Nav -->
+<div class="nav-bar">
+    <div class="nav-item active" onclick="showView('mine-view', this)"><i class="fas fa-hammer"></i>تعدين</div>
+    <div class="nav-item" onclick="showView('tasks-view', this)"><i class="fas fa-tasks"></i>المهام</div>
+    <div class="nav-item" onclick="showView('friends-view', this)"><i class="fas fa-user-friends"></i>الأصدقاء</div>
+    <div class="nav-item" onclick="showView('store-view', this)"><i class="fas fa-shopping-cart"></i>المتجر</div>
+    <div class="nav-item" onclick="showView('profile-view', this)"><i class="fas fa-user-circle"></i>أنا</div>
+</div>
 
 <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+const tg = window.Telegram.WebApp;
+tg.expand();
+const API_URL = "https://Naser090.pythonanywhere.com";
+const user = tg.initDataUnsafe.user || {id:12345, first_name:"Guest"};
 
-    const API_URL = "https://Naser090.pythonanywhere.com";
-    const user = tg.initDataUnsafe.user || { id: 12345, first_name: "Guest" };
+let currentBalance = 0;
+let currentEnergy = 1000;
 
-    let currentBalance = 0;
-    let currentEnergy = 1000;
+// --- Nav ---
+function showView(viewId, el){
+    document.querySelectorAll('.content-view').forEach(v=>v.classList.remove('active-view'));
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active-view');
+    el.classList.add('active');
+}
 
-    // --- وظيفة التنقل ---
-    function showView(viewId, el) {
-        document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active-view'));
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active-view');
-        el.classList.add('active');
-    }
+// --- Init ---
+async function init(){
+    document.getElementById('u-name').innerText = user.first_name;
+    document.getElementById('p-name').innerText = user.first_name;
+    document.getElementById('p-id').innerText = user.id;
+    if(user.photo_url) document.getElementById('u-avatar').src = user.photo_url;
 
-    // --- ربط البيانات ---
-    async function init() {
-        document.getElementById('u-name').innerText = user.first_name;
-        document.getElementById('p-name').innerText = user.first_name;
-        document.getElementById('p-id').innerText = user.id;
-        if(user.photo_url) document.getElementById('u-avatar').src = user.photo_url;
+    try{
+        const res = await fetch(`${API_URL}/user/init/${user.id}`);
+        const data = await res.json();
+        updateUI(data);
+    }catch(e){ console.error("Init failed"); }
+}
 
-        try {
-            const res = await fetch(`${API_URL}/user/init/${user.id}`);
-            const data = await res.json();
-            updateUI(data);
-        } catch(e) { console.error("Init failed"); }
-    }
+// --- Mining ---
+async function handleMine(e){
+    if(currentEnergy < 2){ tg.HapticFeedback.notificationOccurred('error'); return; }
+    createPlusOne(e);
+    tg.HapticFeedback.impactOccurred('medium');
 
-    // --- عملية التعدين ---
-    async function handleMine(e) {
-        if(currentEnergy < 2) { tg.HapticFeedback.notificationOccurred('error'); return; }
-        
-        createPlusOne(e);
-        tg.HapticFeedback.impactOccurred('medium');
+    try{
+        const res = await fetch(`${API_URL}/mine?user_id=${user.id}`, {method:'POST'});
+        const data = await res.json();
+        updateUI(data);
+    }catch(e){ console.error("Mine failed"); }
+}
 
-        try {
-            const res = await fetch(`${API_URL}/mine?user_id=${user.id}`, { method: 'POST' });
-            const data = await res.json();
-            updateUI(data);
-        } catch(e) { console.error("Mine failed"); }
-    }
+function createPlusOne(e){
+    const touch = e.touches ? e.touches[0] : e;
+    const p = document.createElement('div');
+    p.className='plus-one'; p.innerText='+1';
+    p.style.left=touch.clientX+'px'; p.style.top=touch.clientY+'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),800);
+}
 
-    function createPlusOne(e) {
-        const touch = e.touches ? e.touches[0] : e;
-        const p = document.createElement('div');
-        p.className = 'plus-one'; p.innerText = '+1';
-        p.style.left = touch.clientX + 'px'; p.style.top = touch.clientY + 'px';
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 800);
-    }
+// --- Update UI ---
+function updateUI(data){
+    currentBalance = data.balance;
+    currentEnergy = data.energy;
+    document.getElementById('balance').innerText = data.balance.toLocaleString();
+    document.getElementById('p-balance').innerText = data.balance.toLocaleString();
+    document.getElementById('e-now').innerText = data.energy;
+    document.getElementById('energy-fill').style.width = (data.energy/1000*100)+'%';
 
-    function updateUI(data) {
-        currentBalance = data.balance;
-        currentEnergy = data.energy;
-        document.getElementById('balance').innerText = data.balance.toLocaleString();
-        document.getElementById('p-balance').innerText = data.balance.toLocaleString();
-        document.getElementById('e-now').innerText = data.energy;
-        document.getElementById('energy-fill').style.width = (data.energy/1000*100) + '%';
-    }
+    // --- Activate store cards ---
+    document.querySelectorAll('#store-cards .card').forEach(card=>{
+        const required = parseInt(card.getAttribute('data-required'));
+        const btn = card.querySelector('.card-btn');
+        if(currentBalance >= required){
+            btn.disabled=false; btn.innerText="مفعل!";
+            btn.style.backgroundColor="var(--green)"; btn.style.color="white";
+        }else{
+            btn.disabled=true; btn.innerText="غير مفعلة";
+            btn.style.backgroundColor="var(--gold)"; btn.style.color="black";
+        }
+    });
+}
 
-    // --- زر دعوة الأصدقاء ---
-    document.getElementById('inviteBtn').onclick = () => {
-        const link = `https://t.me/NurzaoBot?start=${user.id}`;
-        navigator.clipboard.writeText(link);
-        tg.showAlert("تم نسخ رابط الدعوة! شاركه مع أصدقائك.");
-    };
+// --- Invite Friends ---
+document.getElementById('inviteBtn').onclick=()=>{
+    const link=`https://t.me/NurzaoBot?start=${user.id}`;
+    navigator.clipboard.writeText(link);
+    tg.showAlert("تم نسخ رابط الدعوة! شاركه مع أصدقائك.");
+};
 
-    document.getElementById('mineBtn').addEventListener('touchstart', handleMine);
-    init();
-    setInterval(init, 10000); // تحديث دوري للطاقة
+// --- Event Listeners ---
+document.getElementById('mineBtn').addEventListener('touchstart',handleMine);
+init();
+setInterval(init,10000);
 </script>
 </body>
-</html>
+    </html>
