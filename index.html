@@ -3,72 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nurzao | Strategic Tech Consulting & Digital Assets</title>
+    <title>NURZAO | Global Strategic Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #ffffff; color: #1a1a1a; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .hero-gradient { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
-        .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        :root {
+            --gold: #c5a059;
+            --slate-dark: #0f172a;
+        }
+        body { 
+            background-color: #ffffff; 
+            color: #1a1a1a; 
+            font-family: 'Montserrat', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .serif-font { font-family: 'Cormorant Garamond', serif; }
+        .hero-bg {
+            background: radial-gradient(circle at top right, #f8fafc, #ffffff);
+            position: relative;
+        }
+        .gold-border { border-color: rgba(197, 160, 89, 0.2); }
+        .nav-link:hover { color: #c5a059; letter-spacing: 0.1em; transition: all 0.4s ease; }
+        .premium-card {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .premium-card:hover {
+            border-color: #c5a059;
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
 
-    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
-        <div class="text-2xl font-bold tracking-tight text-slate-900">NURZAO</div>
-        <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
-            <a href="#solutions" class="hover:text-blue-600 transition">Solutions</a>
-            <a href="#domains" class="hover:text-blue-600 transition">Digital Assets</a>
-            <a href="#about" class="hover:text-blue-600 transition">Methodology</a>
+    <div class="w-full bg-slate-900 py-2 px-6 flex justify-between items-center text-[10px] tracking-[0.3em] text-white/60 uppercase">
+        <span>Global Operations Nodes: Active</span>
+        <span>Secure Terminal // 2026</span>
+    </div>
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 p-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-3xl font-light tracking-[0.4em] text-slate-900 serif-font">NURZAO</div>
+            <div class="hidden md:flex space-x-12 text-[11px] uppercase tracking-widest font-medium text-slate-500">
+                <a href="#strategy" class="nav-link">Intelligence</a>
+                <a href="#assets" class="nav-link">Digital Assets</a>
+                <a href="#contact" class="nav-link">Private Inquiry</a>
+            </div>
+            <a href="mailto:Nurzao.HQ@gmail.com" class="text-[11px] font-bold uppercase tracking-[0.2em] border-b-2 border-slate-900 pb-1 hover:text-gold hover:border-gold transition-all">
+                Request Access
+            </a>
         </div>
-        <a href="mailto:Nurzao.HQ@gmail.com" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-600 transition">Work With Us</a>
     </nav>
 
-    <section class="hero-gradient py-24 px-6">
-        <div class="max-w-5xl mx-auto text-center">
-            <span class="text-blue-600 font-bold text-xs uppercase tracking-widest">Innovation meets Strategy</span>
-            <h1 class="text-5xl md:text-6xl font-bold text-slate-900 mt-4 mb-8 leading-tight">
-                Empowering Enterprises with <br> <span class="text-blue-600">Intelligent Infrastructure.</span>
+    <section class="hero-bg py-32 px-6 border-b border-gray-50">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-6xl md:text-8xl serif-font text-slate-900 mb-8 leading-tight italic">
+                The Art of <br> Strategic Resilience
             </h1>
-            <p class="text-slate-600 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-                Nurzao Intelligence Nexus provides high-tier technical consulting and strategic digital identity management for brands looking to lead in a digital-first economy.
+            <div class="w-24 h-[1px] bg-gold mx-auto mb-10"></div>
+            <p class="text-slate-500 text-lg md:text-xl font-light max-w-2xl mx-auto mb-16 leading-relaxed">
+                Nurzao Intelligence Nexus architects elite digital infrastructures for organizations that demand precision, privacy, and unparalleled growth.
             </p>
-            <div class="flex flex-col md:flex-row justify-center gap-4">
-                <a href="#solutions" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">Our Services</a>
-                <a href="mailto:Nurzao.HQ@gmail.com" class="bg-white border border-slate-200 text-slate-900 px-8 py-4 rounded-lg font-bold hover:bg-slate-50 transition">Contact Strategy HQ</a>
+            <a href="#strategy" class="bg-slate-900 text-white px-12 py-5 text-[11px] uppercase tracking-[0.3em] hover:bg-gold transition-colors duration-500 shadow-2xl">
+                Explore The Nexus
+            </a>
+        </div>
+    </section>
+
+    <section id="strategy" class="py-32 max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-16">
+            <div class="premium-card p-12">
+                <span class="text-gold text-xs uppercase tracking-widest mb-6 block">I. Automation</span>
+                <h3 class="text-2xl serif-font mb-6 italic text-slate-900">High-Performance Orchestration</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-light">
+                    We transform operational complexity into elegant, automated workflows that eliminate friction at the highest levels of enterprise.
+                </p>
+            </div>
+
+            <div id="assets" class="premium-card p-12">
+                <span class="text-gold text-xs uppercase tracking-widest mb-6 block">II. Identity</span>
+                <h3 class="text-2xl serif-font mb-6 italic text-slate-900">Elite Asset Acquisition</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-light">
+                    Securing the world's most coveted digital addresses. Our domain strategy focuses on 4-7 character assets with global phonetic dominance.
+                </p>
+            </div>
+
+            <div class="premium-card p-12">
+                <span class="text-gold text-xs uppercase tracking-widest mb-6 block">III. Consulting</span>
+                <h3 class="text-2xl serif-font mb-6 italic text-slate-900">Architectural Auditing</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-light">
+                    Strategic oversight for legacy transitions. We ensure your technical stack is not just secure, but poised for 2026's AI-driven economy.
+                </p>
             </div>
         </div>
     </section>
 
-    <section id="solutions" class="py-24 max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="p-8 border border-slate-100 rounded-2xl bg-white card-hover">
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 flex items-center justify-center rounded-xl mb-6 font-bold">01</div>
-                <h3 class="text-xl font-bold mb-4">Workflow Automation</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">We design and implement custom automated systems that reduce operational overhead and eliminate manual data silos.</p>
-            </div>
-            <div id="domains" class="p-8 border border-slate-100 rounded-2xl bg-white card-hover">
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 flex items-center justify-center rounded-xl mb-6 font-bold">02</div>
-                <h3 class="text-xl font-bold mb-4">Premium Digital Assets</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Strategic consulting on short-form domain acquisition (4-7 characters) to secure brand authority and global memorability.</p>
-            </div>
-            <div class="p-8 border border-slate-100 rounded-2xl bg-white card-hover">
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 flex items-center justify-center rounded-xl mb-6 font-bold">03</div>
-                <h3 class="text-xl font-bold mb-4">Technical Resilience</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">Auditing and re-architecting legacy stacks to ensure they are scalable, secure, and ready for future AI integrations.</p>
+    <section id="contact" class="bg-slate-50 py-32 border-y border-gray-100">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-4xl serif-font italic text-slate-900 mb-6">Initiate a Private Consultation</h2>
+            <p class="text-slate-500 text-sm uppercase tracking-[0.2em] mb-12">Discretion and precision at every node.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="text-center">
+                    <span class="block text-3xl font-light text-slate-900">$250</span>
+                    <span class="text-[10px] uppercase tracking-widest text-gold">Base Hourly Rate</span>
+                </div>
+                <div class="h-12 w-[1px] bg-gray-200 hidden md:block"></div>
+                <a href="mailto:Nurzao.HQ@gmail.com" class="border border-slate-900 px-10 py-4 text-[11px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">
+                    Send Uplink
+                </a>
             </div>
         </div>
     </section>
 
-    <section class="bg-slate-900 py-20 text-center">
-        <h2 class="text-white text-3xl font-bold mb-4">Strategic Consultation</h2>
-        <p class="text-slate-400 mb-8">Expertise tailored to your organizational needs.</p>
-        <div class="text-white text-5xl font-bold mb-10">$185<span class="text-lg text-slate-500 font-normal">/hr</span></div>
-        <a href="mailto:Nurzao.HQ@gmail.com" class="bg-blue-600 text-white px-10 py-4 rounded-full font-bold hover:bg-blue-500 transition">Inquire for Retainers</a>
-    </section>
-
-    <footer class="p-10 text-center border-t border-slate-100">
-        <p class="text-slate-400 text-xs">© 2026 Nurzao Intelligence Nexus. All rights reserved.</p>
+    <footer class="py-16 text-center">
+        <div class="text-[10px] uppercase tracking-[0.5em] text-slate-400">
+            © 2026 NURZAO INTELLIGENCE NEXUS <br>
+            <span class="mt-4 block font-light">Excellence in Digital Architecture</span>
+        </div>
     </footer>
 
 </body>
